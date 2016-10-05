@@ -6,5 +6,7 @@ type Field = [Cell]
 
 makeField :: (Int, Int) -> (Int, Int) -> Field
 makeField (xFieldSize, yFieldSize) (xCellSize, yCellSize) =
-    [ Cell x y False | x <- [0 .. (xFieldSize / xCellSize)],
-                       y <- [0 .. (yFieldSize / yCellSize)] ]
+    [ Cell x y False | x <- [0 .. xCount],
+                       y <- [0 .. yCount] ] where
+                       xCount = div xFieldSize xCellSize
+                       yCount = div yFieldSize yCellSize

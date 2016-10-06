@@ -7,11 +7,9 @@ import Control.Monad
 
 import Config
 
-data Cell = Cell { xNumber   :: Int,
-                   yNumber   :: Int,
-                   xPosition :: Float,
-                   yPosition :: Float,
-                   isAlive   :: Int } deriving Show
+data Cell = Cell { xNumber :: Int,
+                   yNumber :: Int,
+                   isAlive :: Int } deriving Show
 
 type Field = [Cell]
 
@@ -24,16 +22,14 @@ generateCells = do
     y <- [0 .. yCount]
     return (makeCell x y)
     where
-        xCount = div xFieldSize xSize
-        yCount = div yFieldSize ySize
-        xFieldSize = fst windSize
-        yFieldSize = snd windSize
-        xSize = fst cellSize
-        ySize = snd cellSize
+        xCount = div xWindSize xCellSize
+        yCount = div yWindSize yCellSize
+        xWindSize = fst windSize
+        yWindSize = snd windSize
+        xCellSize = fst cellSize
+        yCellSize = snd cellSize
 
 makeCell :: MonadRandom m => Int -> Int -> m Cell
 makeCell x y = fmap (cellConstructor . aliveFunction) getRandom where
-    aliveFunction seed = mod seed 2
-    cellConstructor = Cell x y xSize ySize
-    xSize = fromIntegral $ fst cellSize
-    ySize = fromIntegral $ snd cellSize
+    aliveFunction seed = mod seed 10
+    cellConstructor = Cell x y

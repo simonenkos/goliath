@@ -1,12 +1,39 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Model where
 
-data Cell = Cell { x :: Int, y :: Int, isAlive :: Bool } deriving Show
+import Control.Monad.Random
+import Control.Monad
+
+import Config
+
+data Cell = Cell { xNumber   :: Int,
+                   yNumber   :: Int,
+                   xPosition :: Float,
+                   yPosition :: Float,
+                   isAlive   :: Int } deriving Show
 
 type Field = [Cell]
 
-makeField :: (Int, Int) -> (Int, Int) -> Field
-makeField (xFieldSize, yFieldSize) (xCellSize, yCellSize) =
-    [ Cell x y False | x <- [0 .. xCount],
-                       y <- [0 .. yCount] ] where
-                       xCount = div xFieldSize xCellSize
-                       yCount = div yFieldSize yCellSize
+makeField :: MonadRandom m => m Field
+makeField = sequence generateCells
+
+generateCells :: MonadRandom m => [m Cell]
+generateCells = do
+    x <- [0 .. xCount]
+    y <- [0 .. yCount]
+    return (makeCell x y)
+    where
+        xCount = div xFieldSize xSize
+        yCount = div yFieldSize ySize
+        xFieldSize = fst windSize
+        yFieldSize = snd windSize
+        xSize = fst cellSize
+        ySize = snd cellSize
+
+makeCell :: MonadRandom m => Int -> Int -> m Cell
+makeCell x y = fmap (cellConstructor . aliveFunction) getRandom where
+    aliveFunction seed = mod seed 2
+    cellConstructor = Cell x y xSize ySize
+    xSize = fromIntegral $ fst cellSize
+    ySize = fromIntegral $ snd cellSize

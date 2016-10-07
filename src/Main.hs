@@ -11,9 +11,9 @@ main = do
     initialModel <- makeField
     simulateIO display bgColor fps initialModel renderModel updateModel
     where
-        display = InWindow "Game Of Life" windSize (100, 100)
+        display = InWindow "The Game Of Life" (fst plotSize + 20, snd plotSize + 20) (100, 100)
         bgColor = black
-        fps     = 30
+        fps     = 60
 
-        renderModel model     = return (render model)
-        updateModel view step = return
+        renderModel        model = return (render model)
+        updateModel _ step model = return (update model step)

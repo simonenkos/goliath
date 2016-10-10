@@ -5,7 +5,7 @@ module Model where
 import Control.Monad.Random
 import Control.Monad
 
-import Data.Set
+import Data.Set (fromList, toList, loo)
 
 import Config
 
@@ -28,7 +28,7 @@ makeField :: MonadRandom m => m Field
 makeField = fmap constructor $ sequence $ generateCells xCount yCount where
     xCount = div (fst plotSize) $ fst cellSize
     yCount = div (snd plotSize) $ snd cellSize
-    constructor cells = Field (Data.Set.fromList cells) xCount yCount
+    constructor cells = Field (fromList cells) xCount yCount
 
 generateCells :: MonadRandom m => Int -> Int -> [m Cell]
 generateCells xCount yCount = do
@@ -42,4 +42,15 @@ makeCell x y = fmap (cellConstructor . aliveFunction) getRandom where
     cellConstructor = Cell x y
 
 update :: Field -> Float -> Field
-update model step = model
+update (Field cellList xMaxVal yMaxVal) _ = Field (updateCells $ toList cellList) xMaxVal yMaxVal where
+    updateCells              [] = []
+    updateCells [cell : others] = modifyCell cell : updateCells others
+    --
+    modifyCell (Cell x y alive) | alive && (liveCount  < 2)                   = Cell x y False
+                                | alive && (liveCount == 2 || liveCount == 3) = Cell x y True
+                                | alive && (liveCount  > 3)                   = Cell x y False
+                                | otherwise = if liveCount == 3
+                                    then Cell x y True
+                                    else Cell x y False where
+                                        liveCount = liveCellsCount (neighbours x y)
+    liveCellsCount [(x, y):xs] = undefined -- ToDo

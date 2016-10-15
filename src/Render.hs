@@ -4,13 +4,12 @@ import Model
 import Config
 
 import Data.Maybe
-import Data.Set hiding (map)
 
 import Graphics.Gloss.Data.Picture
 import Graphics.Gloss.Data.Color
 
 render :: Field -> Picture
-render = pictures . map renderCell . toList . cells
+render = pictures . map renderCell . cells
 
 renderCell :: Cell -> Picture
 renderCell cell | isAlive cell == 1 = color blue  rect

@@ -13,7 +13,7 @@ main = do
     where
         display = InWindow "The Game Of Life" (fst plotSize + 20, snd plotSize + 20) (100, 100)
         bgColor = black
-        fps     = 60
+        fps     = 1
 
         renderModel        model = return (render model)
         updateModel _ step model = return (update model step)
